@@ -74,7 +74,7 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder>{
 
         Picasso.with(context)
                 .load(price.getArticleUrl())
-                .resize(1500,750)
+                .resize(200,200)
                 .centerCrop()
                 .error(R.drawable.ic_action_line_chart)
                 .into(holder.tvImage);

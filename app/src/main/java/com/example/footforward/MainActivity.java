@@ -31,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
     private List<PriceHolder> priceList;
     private PriceAdapter priceAdapter;
 
-    String[] shoeName = {"Content not found!", "Content not found!", "Content not found!"};
+    String[] shoeName = {"adidas Yeezy Powerphase Calabasas Core White", "Test Shoe 2", "Test Shoe 3"};
 
-    static String[] shoePrice = {"Content not found!", "Content not found!", "Content not found!"};
+    static String[] shoePrice = {"$219 USD", "$??? USD", "$??? USD"};
 
     String[] shoeURL = {"", "", ""};
 
