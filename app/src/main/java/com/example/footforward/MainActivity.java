@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private PriceAdapter priceAdapter;
     private SwipeRefreshLayout mRefresh;
 
-
+ 
     //Firebase references
     String[] cardV = {"gaming/card_0","photography/card_0","cars/card_0"};
     DocumentReference shoe1 = FirebaseFirestore.getInstance().document(cardV[0]);
