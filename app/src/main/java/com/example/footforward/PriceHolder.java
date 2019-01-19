@@ -1,30 +1,40 @@
 package com.example.footforward;
 
 public class PriceHolder {
-    private String shoeThumbnail, shoeName, shoeCost;
+    private String articleTitle, articleContent, articleURL,articleImage;
 
-    public PriceHolder(String shoeThumbnail, String shoeName, String shoeCost){
-        this.shoeThumbnail = shoeThumbnail;
-        this.shoeName = shoeName;
-        this.shoeCost = shoeCost;
-    }
-    public String getShoeThumbnail(){
-        return shoeThumbnail;
-    }
-    public void setShoeThumbnail(String shoeThumbnail){ this.shoeThumbnail = shoeThumbnail; }
-
-    public String getShoeName(){
-        return shoeName;
-    }
-    public void setShoeName(String shoeName){
-        this.shoeName = shoeName;
+    public PriceHolder(String articleTitle, String articleContent, String articleImage, String articleURL){
+        this.articleTitle = articleTitle;
+        this.articleContent = articleContent;
+        this.articleImage = articleImage;
+        this.articleURL = articleURL;
     }
 
-    public String getShoeCost(){
-        return shoeCost;
+    public String getArticleTitle(){
+        return articleTitle;
     }
-    public void setShoeCost(String shoeCost){
-        this.shoeCost = shoeCost;
+    public void setArticleTitle(String articleTitle){
+        this.articleTitle = articleTitle;
     }
 
+    public String getArticleContent(){
+        return articleContent;
+    }
+    public void setArticleContent(String articleContent){
+        this.articleContent = articleContent;
+    }
+
+    public String getArticleImage(){
+        return articleImage;
+    }
+    public void setArticleImage(String articleImage){
+        this.articleImage = articleImage;
+    }
+
+    public String getArticleUrl(){
+        return articleURL;
+    }
+    public void setArticleUrl(String articleURL){
+        this.articleURL = articleURL;
+    }
 }

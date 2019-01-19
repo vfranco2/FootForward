@@ -1,15 +1,13 @@
 package com.example.footforward;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.content.Context;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
 
 public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder>{
@@ -29,14 +27,15 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder>{
 
     //Viewholder
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView tvShoename, tvCost;
-        public ImageView ivThumbnail;
+        public TextView tvTitle, tvContent, tvURL;
+        public ImageView tvImage;
 
         public ViewHolder(View v, final OnItemClickListener listener){
             super(v);
-            ivThumbnail = (ImageView)v.findViewById(R.id.shoe_thumbnail);
-            tvShoename = (TextView)v.findViewById(R.id.shoe_name);
-            tvCost = (TextView)v.findViewById(R.id.shoe_price);
+            tvTitle = (TextView)v.findViewById(R.id.title_text);
+            tvContent = (TextView)v.findViewById(R.id.article_text);
+            tvImage = (ImageView)v.findViewById(R.id.article_image);
+            tvURL = (TextView)v.findViewById(R.id.article_url);
 
             //Some item click stuff in constructor
             v.setOnClickListener(new View.OnClickListener(){
@@ -58,15 +57,6 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder>{
         this.context = context;
     }
 
-    // Yousif's function to check code working and see results
-    public void printList(){
-        System.out.print("[");
-        for(PriceHolder it : priceList) {
-            System.out.print(it.toString() + ", ");
-        }
-        System.out.print("]");
-    }
-
     @Override
     public PriceAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_cards, parent, false);
@@ -76,16 +66,19 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(PriceAdapter.ViewHolder holder, int position){
-        PriceHolder article = priceList.get(position);
-        holder.tvShoename.setText(article.getShoeName());
-        holder.tvCost.setText(article.getShoeCost());
+        PriceHolder price = priceList.get(position);
+        holder.tvTitle.setText(price.getArticleTitle());
+        holder.tvContent.setText(price.getArticleContent());
+
+        holder.tvURL.setText(price.getArticleUrl());
 
         Picasso.with(context)
-                .load(article.getShoeThumbnail())
+                .load(price.getArticleUrl())
                 .resize(1500,750)
                 .centerCrop()
                 .error(R.drawable.ic_action_line_chart)
-                .into(holder.ivThumbnail);
+                .into(holder.tvImage);
+
     }
 
     @Override
