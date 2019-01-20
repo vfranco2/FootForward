@@ -24,7 +24,7 @@ import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
-public class JSpace extends AppCompatActivity {
+public class Supreme extends AppCompatActivity {
 
     private TextView shoeMsrp;
     private TextView shoeName;
@@ -37,9 +37,9 @@ public class JSpace extends AppCompatActivity {
     String[] axisData = {"Jan", "Feb", "Mar", "Apr", "May", "June"};
     int[] yAxisData = {50, 20, 15, 30, 20, 60};
 
-    DocumentReference nikeJordan = FirebaseFirestore.getInstance().document("nike/jordan_0");
+    DocumentReference supremeNorth = FirebaseFirestore.getInstance().document("supreme/jacket_0");
 
-    private DocumentReference firebaseDocs = nikeJordan;
+    private DocumentReference firebaseDocs = supremeNorth;
 
     public static final String TAG = "FOOTFORWARD";
     public static final String NAME_KEY = "name";

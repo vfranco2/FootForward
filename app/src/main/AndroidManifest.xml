@@ -29,5 +29,9 @@
             android:name=".JSpace">
         </activity>
 
+        <activity
+            android:name=".Supreme">
+        </activity>
+
     </application>
 </manifest>

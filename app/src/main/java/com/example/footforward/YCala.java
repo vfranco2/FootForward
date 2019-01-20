@@ -34,8 +34,8 @@ public class YCala extends AppCompatActivity {
     private ImageView shoePic;
 
     LineChartView lineChartView;
-    String[] axisData = {"Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"};
-    int[] yAxisData = {50, 20, 15, 30, 20, 60, 15, 40, 45, 10, 90, 18};
+    String[] axisData = {"Jan", "Feb", "Mar", "Apr", "May", "June"};
+    int[] yAxisData = {50, 20, 15, 30, 20, 60};
 
     DocumentReference adidasYeezy = FirebaseFirestore.getInstance().document("adidas/yeezy_0");
 

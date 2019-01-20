@@ -38,13 +38,19 @@ public class MainActivity extends AppCompatActivity {
     private TextView shoeName2;
     private ImageView shoePic2;
 
+    private TextView shoeMsrp3;
+    private TextView shoeName3;
+    private ImageView shoePic3;
+
 
 
     DocumentReference adidasYeezy = FirebaseFirestore.getInstance().document("adidas/yeezy_0");
     DocumentReference nikeJordan = FirebaseFirestore.getInstance().document("nike/jordan_0");
+    DocumentReference supremeNorth = FirebaseFirestore.getInstance().document("supreme/jacket_0");
 
     private DocumentReference firebaseDocsYeezy = adidasYeezy;
     private DocumentReference firebaseDocsJordan = nikeJordan;
+    private DocumentReference firebaseDocsSupreme = supremeNorth;
 
     public static final String TAG = "FOOTFORWARD";
     public static final String NAME_KEY = "name";
@@ -75,6 +81,12 @@ public class MainActivity extends AppCompatActivity {
         shoePic2 = (ImageView)findViewById(R.id.shoe_image_2);
         shoeMsrp2.setText(price);
         shoeName2.setText(name);
+
+        shoeMsrp3 = (TextView)findViewById(R.id.last_sale_3);
+        shoeName3 = (TextView)findViewById(R.id.shoe_name_3);
+        shoePic3 = (ImageView)findViewById(R.id.shoe_image_3);
+        shoeMsrp3.setText(price);
+        shoeName3.setText(name);
 
         final String pricePref = "Last Sold: ";
 
@@ -124,6 +136,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        firebaseDocsSupreme.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+                    name = documentSnapshot.getString(NAME_KEY);
+                    price = documentSnapshot.getString(PRICE_KEY);
+                    url = documentSnapshot.getString(URL_KEY);
+
+                    shoeName3.setText(name);
+                    shoeMsrp3.setText(pricePref + price);
+                    Picasso.with(getApplicationContext()).load(url).into(shoePic3);
+                }
+                else {
+                    Log.d(TAG, "Error: Document does not exist.");
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Document was not retrieved.", e);
+            }
+        });
+
 
         CardView shoeYeezy = findViewById(R.id.shoe_card_1);
         shoeYeezy.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +173,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, JSpace.class));
+            }
+        });
+
+        CardView shoeSupreme = findViewById(R.id.shoe_card_3);
+        shoeSupreme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, Supreme.class));
             }
         });
     }
