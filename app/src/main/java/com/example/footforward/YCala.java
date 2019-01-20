@@ -31,11 +31,8 @@ public class YCala extends AppCompatActivity {
     private TextView shoeRelease;
     private TextView shoeHi;
     private TextView shoeLo;
+    private TextView shoeSuggested;
     private ImageView shoePic;
-
-    LineChartView lineChartView;
-    String[] axisData = {"Jan", "Feb", "Mar", "Apr", "May", "June"};
-    int[] yAxisData = {50, 20, 15, 30, 20, 60};
 
     DocumentReference adidasYeezy = FirebaseFirestore.getInstance().document("adidas/yeezy_0");
 
@@ -48,6 +45,7 @@ public class YCala extends AppCompatActivity {
     public static final String LO_KEY = "low";
     public static final String RELEASE_KEY = "releaseDate";
     public static final String URL_KEY = "imageUrl";
+    public static final String RESULT_KEY = "priceForecast";
 
     static String name = "Missing Name!";
     static String price = "Missing Price!";
@@ -55,6 +53,7 @@ public class YCala extends AppCompatActivity {
     static String hi = "Missing Price!";
     static String lo = "Missing Price!";
     static String url = "";
+    static String result = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +66,7 @@ public class YCala extends AppCompatActivity {
         shoeHi = (TextView)findViewById(R.id.shoe_high);
         shoeLo = (TextView)findViewById(R.id.shoe_low);
         shoePic = (ImageView)findViewById(R.id.shoe_pic);
+        shoeSuggested = (TextView)findViewById(R.id.shoe_suggested);
 
         shoeMsrp.setText(price);
         shoeName.setText(name);
@@ -74,76 +74,86 @@ public class YCala extends AppCompatActivity {
         shoeHi.setText(hi);
         shoeLo.setText(lo);
 
-        //Linechart stuff
-        lineChartView = findViewById(R.id.chart);
-        List yAxisValues = new ArrayList();
-        List axisValues = new ArrayList();
-        Line line = new Line(yAxisValues).setColor(Color.parseColor("#73BD76"));
-        for(int i = 0; i < axisData.length; i++){
-            axisValues.add(i, new AxisValue(i).setLabel(axisData[i]));
-        }
-        for (int i = 0; i < yAxisData.length; i++){
-            yAxisValues.add(new PointValue(i, yAxisData[i]));
-        }
-        List lines = new ArrayList();
-        lines.add(line);
-        LineChartData data = new LineChartData();
-        data.setLines(lines);
-        lineChartView.setLineChartData(data);
-        //Axis labels
-        Axis axis = new Axis();
-        axis.setValues(axisValues);
-        axis.setTextSize(16);
-        axis.setTextColor(Color.parseColor("#03A9F4"));
-        data.setAxisXBottom(axis);
-        Axis yAxis = new Axis();
-        yAxis.setName("Price");
-        yAxis.setTextColor(Color.parseColor("#03A9F4"));
-        yAxis.setTextSize(16);
-        data.setAxisYLeft(yAxis);
-        lineChartView.setLineChartData(data);
-        Viewport viewport = new Viewport(lineChartView.getMaximumViewport());
-        viewport.top = 110;
-        lineChartView.setMaximumViewport(viewport);
-        lineChartView.setCurrentViewport(viewport);
-        lineChartView.setZoomEnabled(false);
-        lineChartView.setValueSelectionEnabled(true);
-        line.setFilled(true);
-        line.setHasLabelsOnlyForSelected(true);
-
-        final String pricePref = "Initial Price: ";
+        final String pricePref = "MSRP: $";
         final String relPref = "Release Date: ";
-        final String highPref = "52-Week High: ";
-        final String lowPref = "52-Week Low: ";
+        final String highPref = "52-Week High: $";
+        final String lowPref = "52-Week Low: $";
+        final String suggested = "Feb Est.: $";
 
-            firebaseDocs.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists()){
-                        name = documentSnapshot.getString(NAME_KEY);
-                        price = documentSnapshot.getString(PRICE_KEY);
-                        release = documentSnapshot.getString(RELEASE_KEY);
-                        hi = documentSnapshot.getString(HI_KEY);
-                        lo = documentSnapshot.getString(LO_KEY);
-                        url = documentSnapshot.getString(URL_KEY);
+        firebaseDocs.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+                    name = documentSnapshot.getString(NAME_KEY);
+                    price = documentSnapshot.getString(PRICE_KEY);
+                    release = documentSnapshot.getString(RELEASE_KEY);
+                    hi = documentSnapshot.getString(HI_KEY);
+                    lo = documentSnapshot.getString(LO_KEY);
+                    url = documentSnapshot.getString(URL_KEY);
+                    result = documentSnapshot.getString(RESULT_KEY);
+                    int res = Integer.parseInt(result);
 
-                        shoeName.setText(name);
-                        shoeRelease.setText(relPref + release);
-                        shoeMsrp.setText(pricePref + price);
-                        shoeHi.setText(highPref + hi);
-                        shoeLo.setText(lowPref + lo);
-                        Picasso.with(getApplicationContext()).load(url).into(shoePic);
+                    shoeName.setText(name);
+                    shoeRelease.setText(relPref + release);
+                    shoeMsrp.setText(pricePref + price);
+                    shoeHi.setText(highPref + hi);
+                    shoeLo.setText(lowPref + lo);
+                    shoeSuggested.setText(suggested + result);
+                    Picasso.with(getApplicationContext()).load(url).into(shoePic);
 
+
+                    //Linechart stuff
+                    LineChartView lineChartView;
+                    String[] axisData = {"Sep", "Oct", "Nov", "Dec", "Jan", "Feb"};
+                    int[] yAxisData = {262, 255, 248, 325, 241, res};
+
+                    lineChartView = findViewById(R.id.chart);
+                    List yAxisValues = new ArrayList();
+                    List axisValues = new ArrayList();
+                    Line line = new Line(yAxisValues).setColor(Color.parseColor("#73BD76"));
+                    for(int i = 0; i < axisData.length; i++){
+                        axisValues.add(i, new AxisValue(i).setLabel(axisData[i]));
                     }
-                    else {
-                        Log.d(TAG, "Error: Document does not exist.");
+                    for (int i = 0; i < yAxisData.length; i++){
+                        yAxisValues.add(new PointValue(i, yAxisData[i]));
                     }
+                    List lines = new ArrayList();
+                    lines.add(line);
+                    LineChartData data = new LineChartData();
+                    data.setLines(lines);
+                    lineChartView.setLineChartData(data);
+                    //Axis labels
+                    Axis axis = new Axis();
+                    axis.setValues(axisValues);
+                    axis.setTextSize(16);
+                    axis.setTextColor(Color.parseColor("#03A9F4"));
+                    data.setAxisXBottom(axis);
+                    Axis yAxis = new Axis();
+                    yAxis.setName("Price");
+                    yAxis.setTextColor(Color.parseColor("#03A9F4"));
+                    yAxis.setTextSize(16);
+                    data.setAxisYLeft(yAxis);
+                    lineChartView.setLineChartData(data);
+                    Viewport viewport = new Viewport(lineChartView.getMaximumViewport());
+                    viewport.top = 400;
+                    lineChartView.setMaximumViewport(viewport);
+                    lineChartView.setCurrentViewport(viewport);
+                    lineChartView.setZoomEnabled(false);
+                    lineChartView.setValueSelectionEnabled(true);
+                    line.setFilled(true);
+                    line.setHasLabelsOnlyForSelected(true);
+
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "Document was not retrieved.", e);
+                else {
+                    Log.d(TAG, "Error: Document does not exist.");
                 }
-            });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Document was not retrieved.", e);
+            }
+        });
+
     }
 }

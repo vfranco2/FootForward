@@ -31,11 +31,8 @@ public class JSpace extends AppCompatActivity {
     private TextView shoeRelease;
     private TextView shoeHi;
     private TextView shoeLo;
+    private TextView shoeSuggested;
     private ImageView shoePic;
-
-    LineChartView lineChartView;
-    String[] axisData = {"Jan", "Feb", "Mar", "Apr", "May", "June"};
-    int[] yAxisData = {50, 20, 15, 30, 20, 60};
 
     DocumentReference nikeJordan = FirebaseFirestore.getInstance().document("nike/jordan_0");
 
@@ -48,6 +45,7 @@ public class JSpace extends AppCompatActivity {
     public static final String LO_KEY = "low";
     public static final String RELEASE_KEY = "releaseDate";
     public static final String URL_KEY = "imageUrl";
+    public static final String RESULT_KEY = "priceForecast";
 
     static String name = "Missing Name!";
     static String price = "Missing Price!";
@@ -55,6 +53,7 @@ public class JSpace extends AppCompatActivity {
     static String hi = "Missing Price!";
     static String lo = "Missing Price!";
     static String url = "";
+    static String result = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +66,7 @@ public class JSpace extends AppCompatActivity {
         shoeHi = (TextView)findViewById(R.id.shoe_high);
         shoeLo = (TextView)findViewById(R.id.shoe_low);
         shoePic = (ImageView)findViewById(R.id.shoe_pic);
+        shoeSuggested = (TextView)findViewById(R.id.shoe_suggested);
 
         shoeMsrp.setText(price);
         shoeName.setText(name);
@@ -74,47 +74,11 @@ public class JSpace extends AppCompatActivity {
         shoeHi.setText(hi);
         shoeLo.setText(lo);
 
-        //Linechart stuff
-        lineChartView = findViewById(R.id.chart);
-        List yAxisValues = new ArrayList();
-        List axisValues = new ArrayList();
-        Line line = new Line(yAxisValues).setColor(Color.parseColor("#73BD76"));
-        for(int i = 0; i < axisData.length; i++){
-            axisValues.add(i, new AxisValue(i).setLabel(axisData[i]));
-        }
-        for (int i = 0; i < yAxisData.length; i++){
-            yAxisValues.add(new PointValue(i, yAxisData[i]));
-        }
-        List lines = new ArrayList();
-        lines.add(line);
-        LineChartData data = new LineChartData();
-        data.setLines(lines);
-        lineChartView.setLineChartData(data);
-        //Axis labels
-        Axis axis = new Axis();
-        axis.setValues(axisValues);
-        axis.setTextSize(16);
-        axis.setTextColor(Color.parseColor("#03A9F4"));
-        data.setAxisXBottom(axis);
-        Axis yAxis = new Axis();
-        yAxis.setName("Price");
-        yAxis.setTextColor(Color.parseColor("#03A9F4"));
-        yAxis.setTextSize(16);
-        data.setAxisYLeft(yAxis);
-        lineChartView.setLineChartData(data);
-        Viewport viewport = new Viewport(lineChartView.getMaximumViewport());
-        viewport.top = 110;
-        lineChartView.setMaximumViewport(viewport);
-        lineChartView.setCurrentViewport(viewport);
-        lineChartView.setZoomEnabled(false);
-        lineChartView.setValueSelectionEnabled(true);
-        line.setFilled(true);
-        line.setHasLabelsOnlyForSelected(true);
-
-        final String pricePref = "Initial Price: ";
+        final String pricePref = "MSRP: $";
         final String relPref = "Release Date: ";
-        final String highPref = "52-Week High: ";
-        final String lowPref = "52-Week Low: ";
+        final String highPref = "52-Week High: $";
+        final String lowPref = "52-Week Low: $";
+        final String suggested = "Feb Est.: $";
 
         firebaseDocs.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -126,13 +90,58 @@ public class JSpace extends AppCompatActivity {
                     hi = documentSnapshot.getString(HI_KEY);
                     lo = documentSnapshot.getString(LO_KEY);
                     url = documentSnapshot.getString(URL_KEY);
+                    result = documentSnapshot.getString(RESULT_KEY);
+                    int res = Integer.parseInt(result);
 
                     shoeName.setText(name);
                     shoeRelease.setText(relPref + release);
                     shoeMsrp.setText(pricePref + price);
                     shoeHi.setText(highPref + hi);
                     shoeLo.setText(lowPref + lo);
+                    shoeSuggested.setText(suggested + result);
                     Picasso.with(getApplicationContext()).load(url).into(shoePic);
+
+
+                    //Linechart stuff
+                    LineChartView lineChartView;
+                    String[] axisData = {"Sep", "Oct", "Nov", "Dec", "Jan", "Feb"};
+                    int[] yAxisData = {286, 277, 284, 326, 315, res};
+
+                    lineChartView = findViewById(R.id.chart);
+                    List yAxisValues = new ArrayList();
+                    List axisValues = new ArrayList();
+                    Line line = new Line(yAxisValues).setColor(Color.parseColor("#73BD76"));
+                    for(int i = 0; i < axisData.length; i++){
+                        axisValues.add(i, new AxisValue(i).setLabel(axisData[i]));
+                    }
+                    for (int i = 0; i < yAxisData.length; i++){
+                        yAxisValues.add(new PointValue(i, yAxisData[i]));
+                    }
+                    List lines = new ArrayList();
+                    lines.add(line);
+                    LineChartData data = new LineChartData();
+                    data.setLines(lines);
+                    lineChartView.setLineChartData(data);
+                    //Axis labels
+                    Axis axis = new Axis();
+                    axis.setValues(axisValues);
+                    axis.setTextSize(16);
+                    axis.setTextColor(Color.parseColor("#03A9F4"));
+                    data.setAxisXBottom(axis);
+                    Axis yAxis = new Axis();
+                    yAxis.setName("Price");
+                    yAxis.setTextColor(Color.parseColor("#03A9F4"));
+                    yAxis.setTextSize(16);
+                    data.setAxisYLeft(yAxis);
+                    lineChartView.setLineChartData(data);
+                    Viewport viewport = new Viewport(lineChartView.getMaximumViewport());
+                    viewport.top = 400;
+                    lineChartView.setMaximumViewport(viewport);
+                    lineChartView.setCurrentViewport(viewport);
+                    lineChartView.setZoomEnabled(false);
+                    lineChartView.setValueSelectionEnabled(true);
+                    line.setFilled(true);
+                    line.setHasLabelsOnlyForSelected(true);
 
                 }
                 else {
@@ -145,5 +154,6 @@ public class JSpace extends AppCompatActivity {
                 Log.d(TAG, "Document was not retrieved.", e);
             }
         });
+
     }
 }

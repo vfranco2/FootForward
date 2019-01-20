@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         shoeMsrp3.setText(price);
         shoeName3.setText(name);
 
-        final String pricePref = "Last Sold: ";
+        final String pricePref = "MSRP: ";
 
         firebaseDocsYeezy.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
