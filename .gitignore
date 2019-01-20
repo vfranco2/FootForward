@@ -1,12 +1,11 @@
+/python/.vscode/*
+/python/ServiceAccountKey.json
 *.iml
 .gradle
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+/.idea/*
+.idea/*
+/python/.DS_Store
 .DS_Store
 /build
 /captures
