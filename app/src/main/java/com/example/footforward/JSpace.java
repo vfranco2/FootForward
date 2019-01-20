@@ -24,7 +24,7 @@ import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
-public class YCala extends AppCompatActivity {
+public class JSpace extends AppCompatActivity {
 
     private TextView shoeMsrp;
     private TextView shoeName;
@@ -37,9 +37,9 @@ public class YCala extends AppCompatActivity {
     String[] axisData = {"Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"};
     int[] yAxisData = {50, 20, 15, 30, 20, 60, 15, 40, 45, 10, 90, 18};
 
-    DocumentReference adidasYeezy = FirebaseFirestore.getInstance().document("adidas/yeezy_0");
+    DocumentReference nikeJordan = FirebaseFirestore.getInstance().document("nike/jordan_0");
 
-    private DocumentReference firebaseDocs = adidasYeezy;
+    private DocumentReference firebaseDocs = nikeJordan;
 
     public static final String TAG = "FOOTFORWARD";
     public static final String NAME_KEY = "name";
@@ -117,34 +117,34 @@ public class YCala extends AppCompatActivity {
         final String lowPref = "52-Week Low: ";
 
         //Firebase stuff, assigns scraped data to cards
-            firebaseDocs.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists()){
-                        name = documentSnapshot.getString(NAME_KEY);
-                        price = documentSnapshot.getString(PRICE_KEY);
-                        release = documentSnapshot.getString(RELEASE_KEY);
-                        hi = documentSnapshot.getString(HI_KEY);
-                        lo = documentSnapshot.getString(LO_KEY);
-                        url = documentSnapshot.getString(URL_KEY);
+        firebaseDocs.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+                    name = documentSnapshot.getString(NAME_KEY);
+                    price = documentSnapshot.getString(PRICE_KEY);
+                    release = documentSnapshot.getString(RELEASE_KEY);
+                    hi = documentSnapshot.getString(HI_KEY);
+                    lo = documentSnapshot.getString(LO_KEY);
+                    url = documentSnapshot.getString(URL_KEY);
 
-                        shoeName.setText(name);
-                        shoeRelease.setText(relPref + release);
-                        shoeMsrp.setText(pricePref + price);
-                        shoeHi.setText(highPref + hi);
-                        shoeLo.setText(lowPref + lo);
-                        Picasso.with(getApplicationContext()).load(url).into(shoePic);
+                    shoeName.setText(name);
+                    shoeRelease.setText(relPref + release);
+                    shoeMsrp.setText(pricePref + price);
+                    shoeHi.setText(highPref + hi);
+                    shoeLo.setText(lowPref + lo);
+                    Picasso.with(getApplicationContext()).load(url).into(shoePic);
 
-                    }
-                    else {
-                        Log.d(TAG, "Error: Document does not exist.");
-                    }
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "Document was not retrieved.", e);
+                else {
+                    Log.d(TAG, "Error: Document does not exist.");
                 }
-            });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Document was not retrieved.", e);
+            }
+        });
     }
 }
