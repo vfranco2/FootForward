@@ -135,7 +135,7 @@ public class Supreme extends AppCompatActivity {
                     data.setAxisYLeft(yAxis);
                     lineChartView.setLineChartData(data);
                     Viewport viewport = new Viewport(lineChartView.getMaximumViewport());
-                    viewport.top = 400;
+                    viewport.top = 1600;
                     lineChartView.setMaximumViewport(viewport);
                     lineChartView.setCurrentViewport(viewport);
                     lineChartView.setZoomEnabled(false);
