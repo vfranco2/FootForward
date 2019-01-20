@@ -116,7 +116,6 @@ public class YCala extends AppCompatActivity {
         final String highPref = "52-Week High: ";
         final String lowPref = "52-Week Low: ";
 
-        //Firebase stuff, assigns scraped data to cards
             firebaseDocs.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {

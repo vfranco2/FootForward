@@ -1,19 +1,24 @@
 package com.example.footforward;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.net.*;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.*;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,94 +30,117 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
-    //private DrawerLayout mDrawerLayout;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private List<PriceHolder> priceList;
-    private PriceAdapter priceAdapter;
+    private TextView shoeMsrp1;
+    private TextView shoeName1;
+    private ImageView shoePic1;
 
-    String[] shoeName = {"adidas Yeezy Powerphase Calabasas Core White", "Test Shoe 2", "Test Shoe 3"};
-
-    static String[] shoePrice = {"$219 USD", "$??? USD", "$??? USD"};
-
-    String[] shoeURL = {"", "", ""};
-
-    String[] shoeImage = {
-            "https://imgplaceholder.com/420x320/ff7f7f/333333/fa-image",
-            "https://imgplaceholder.com/420x320/ff7f7f/333333/fa-image",
-            "https://imgplaceholder.com/420x320/ff7f7f/333333/fa-image"};
+    private TextView shoeMsrp2;
+    private TextView shoeName2;
+    private ImageView shoePic2;
 
 
-    //Firebase references
-    DocumentReference shoe1 = FirebaseFirestore.getInstance().document("shoe1/card_0");
-    DocumentReference shoe2 = FirebaseFirestore.getInstance().document("shoe2/card_0");
-    DocumentReference shoe3 = FirebaseFirestore.getInstance().document("shoe3/card_0");
 
-    private DocumentReference[] firebaseDocs = {shoe1, shoe2, shoe3};
+    DocumentReference adidasYeezy = FirebaseFirestore.getInstance().document("adidas/yeezy_0");
+    DocumentReference nikeJordan = FirebaseFirestore.getInstance().document("nike/jordan_0");
 
-    //Used for getting data fields in Firebase
+    private DocumentReference firebaseDocsYeezy = adidasYeezy;
+    private DocumentReference firebaseDocsJordan = nikeJordan;
+
     public static final String TAG = "FOOTFORWARD";
     public static final String NAME_KEY = "name";
-    public static final String PRICE_KEY = "price";
-    public static final String URL_KEY = "url";
-    public static final String IMAGE_KEY = "image";
+    public static final String PRICE_KEY = "retailPrice";
+    public static final String URL_KEY = "imageUrl";
 
-    @Override
+    static String name = "Missing Name!";
+    static String price = "Missing Price!";
+    static String url = "";
+
+
+
+
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRecyclerView = findViewById(R.id.recycler_view);
-        mLayoutManager = new LinearLayoutManager(this);
 
-        //Recycler view stuff, fills with default images/text
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        priceList = new ArrayList<>();
+        shoeMsrp1 = (TextView)findViewById(R.id.last_sale_1);
+        shoeName1 = (TextView)findViewById(R.id.shoe_name_1);
+        shoePic1 = (ImageView)findViewById(R.id.shoe_image_1);
+        shoeMsrp1.setText(price);
+        shoeName1.setText(name);
 
-        for (int i = 0; i < shoeName.length; i++){
-            PriceHolder article = new PriceHolder(shoeName[i], shoePrice[i], shoeURL[i], shoeImage[i]);
-            priceList.add(article);
-        }
+        shoeMsrp2 = (TextView)findViewById(R.id.last_sale_2);
+        shoeName2 = (TextView)findViewById(R.id.shoe_name_2);
+        shoePic2 = (ImageView)findViewById(R.id.shoe_image_2);
+        shoeMsrp2.setText(price);
+        shoeName2.setText(name);
 
-        priceAdapter = new PriceAdapter(priceList, getApplicationContext());
-        mRecyclerView.setAdapter(priceAdapter);
-        priceAdapter.notifyDataSetChanged();
+        final String pricePref = "Last Sold: ";
 
+        firebaseDocsYeezy.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+                    name = documentSnapshot.getString(NAME_KEY);
+                    price = documentSnapshot.getString(PRICE_KEY);
+                    url = documentSnapshot.getString(URL_KEY);
 
-
-        //Firebase stuff, assigns scraped data to cards
-        for (int k = 0; k < firebaseDocs.length; k++){
-            final int j = k;
-            firebaseDocs[j].get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists()){
-                        shoePrice[j] = documentSnapshot.getString(PRICE_KEY);
-                        shoeName[j] = documentSnapshot.getString(NAME_KEY);
-                        shoeURL[j] = documentSnapshot.getString(URL_KEY);
-                        shoeImage[j] = documentSnapshot.getString(IMAGE_KEY);
-
-                        //Re-populate the view with database content at that location
-                        PriceHolder article = new PriceHolder(shoePrice[j], shoeName[j], shoeURL[j], shoeImage[j]);
-                        priceList.set(j, article);
-
-                        //Click handling for each article
-                        priceAdapter.setOnItemClickListener(new PriceAdapter.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(int position) {
-                                Toast.makeText(getApplicationContext(), "You clicked " + position, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                    else {
-                        Log.d(TAG, "Error: Document does not exist.");
-                    }
+                    shoeName1.setText(name);
+                    shoeMsrp1.setText(pricePref + price);
+                    Picasso.with(getApplicationContext()).load(url).into(shoePic1);
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "Document was not retrieved.", e);
+                else {
+                    Log.d(TAG, "Error: Document does not exist.");
                 }
-            });
-        }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Document was not retrieved.", e);
+            }
+        });
+
+        firebaseDocsJordan.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+                    name = documentSnapshot.getString(NAME_KEY);
+                    price = documentSnapshot.getString(PRICE_KEY);
+                    url = documentSnapshot.getString(URL_KEY);
+
+                    shoeName2.setText(name);
+                    shoeMsrp2.setText(pricePref + price);
+                    Picasso.with(getApplicationContext()).load(url).into(shoePic2);
+                }
+                else {
+                    Log.d(TAG, "Error: Document does not exist.");
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Document was not retrieved.", e);
+            }
+        });
+
+
+        CardView shoeYeezy = findViewById(R.id.shoe_card_1);
+        shoeYeezy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, YCala.class));
+            }
+        });
+
+        CardView shoeJordan = findViewById(R.id.shoe_card_2);
+        shoeJordan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, JSpace.class));
+            }
+        });
     }
+
+
 }
